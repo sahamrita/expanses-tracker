@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="Manage your personal finances efficiently with AuraSpend - the lightweight, secure, and intuitive browser-based Daily Expense Tracker.">
+  <title>AuraSpend— Daily Expense Tracker</title>
+  <!-- Google Fonts: Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+  <!-- Plotly.js Charting Library -->
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+</head>
+
+<body>
+
+  <!-- Background Gradients -->
+  <div class="bg-glow bg-glow-1"></div>
+  <div class="bg-glow bg-glow-2"></div>
+
+  <!-- Header / Navigation -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="logo-area">
+        <div class="logo-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+          </svg>
+        </div>
+        <div class="logo-text">
+          <h1>AuraSpend</h1>
+          <span>Daily Expense Tracker</span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <!-- Export Button with Dropdown -->
+        <div class="dropdown" id="exportDropdown">
+          <button id="btnExport" class="btn-secondary" title="Export transactions" aria-haspopup="true"
+            aria-expanded="false">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" x2="12" y1="15" y2="3" />
+            </svg>
+            <span>Export</span>
+            <svg class="icon chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m6 9 6 6 6-6" />
+            </svg>
+          </button>
+          <div class="dropdown-content">
+            <button id="btnExportJSON">
+              <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <path d="M14 2v6h6" />
+                <path d="M16 13H8" />
+                <path d="M16 17H8" />
+                <path d="M10 9H8" />
+              </svg>
+              JSON Backup
+            </button>
+            <button id="btnExportCSV">
+              <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+                <path d="M8 13h8" />
+                <path d="M8 17h8" />
+              </svg>
+              Excel CSV
+            </button>
+          </div>
+        </div>
+
+        <label for="importFile" class="btn-secondary btn-label" title="Import transactions from JSON">
+          <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" x2="12" y1="3" y2="15" />
+          </svg>
+          <span>Import</span>
+          <input type="file" id="importFile" accept=".json" style="display: none;">
+        </label>
+
+        <button id="themeToggle" class="btn-icon-toggle" aria-label="Toggle light/dark theme">
+          <svg class="icon sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="4" />
+            <path
+              d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+          </svg>
+          <svg class="icon moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="app-container">
+
+    <!-- Left Column: Stats & Balance -->
+    <section class="dashboard-side">
+      <!-- Balance Card -->
+      <div class="card card-balance">
+        <div class="card-glow"></div>
+        <div class="balance-meta">
+          <span class="label">CURRENT BALANCE</span>
+          <div class="balance-amount" id="balanceAmount">₹0.00</div>
+        </div>
+
+        <div class="quick-actions">
+          <button id="btnQuickIncome" class="btn btn-income">
+            <span class="btn-icon-wrapper">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14" />
+                <path d="M12 5v14" />
+              </svg>
+            </span>
+            <span>Add Income</span>
+          </button>
+
+          <button id="btnQuickExpense" class="btn btn-expense">
+            <span class="btn-icon-wrapper">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14" />
+              </svg>
+            </span>
+            <span>Add Expense</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- One-Tap Quick Add Chips -->
+      <div class="card card-quick-chips">
+        <div class="quick-chips-header">
+          <h2 class="section-title">Quick Add</h2>
+          <span class="quick-chips-sub">One tap &middot; instant expense</span>
+        </div>
+        <div class="quick-chips-grid" id="quickChipsGrid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <!-- Income Card -->
+        <div class="card card-stat">
+          <div class="stat-icon income-color">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
+              <polyline points="16 7 22 7 22 13" />
+            </svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-label">Total Income</span>
+            <div class="stat-value text-income" id="statIncome">₹0.00</div>
+          </div>
+        </div>
+
+        <!-- Expense Card -->
+        <div class="card card-stat">
+          <div class="stat-icon expense-color">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="22 17 13.5 8.5 8.5 13.5 2 7" />
+              <polyline points="16 17 22 17 22 11" />
+            </svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-label">Total Expenses</span>
+            <div class="stat-value text-expense" id="statExpense">₹0.00</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Category Distribution -->
+      <div class="card card-categories">
+        <h2 class="section-title">Expense Breakdown</h2>
+        <div class="chart-container">
+          <!-- Custom Visual Multi-Segment Donut Chart -->
+          <div class="donut-chart-wrapper">
+            <svg class="donut-chart" viewBox="0 0 36 36" id="donutChartSVG">
+              <circle class="donut-bg" cx="18" cy="18" r="15.91549430918954" fill="none" stroke-width="3.8"></circle>
+            </svg>
+            <div class="donut-center">
+              <span id="donutPercent">0%</span>
+              <span class="donut-subtitle">Spent</span>
+            </div>
+          </div>
+
+          <div class="category-breakdown-list" id="categoryProgressList">
+            <!-- Dynamically populated categories with progress bars -->
+            <p class="empty-state-text">No expense categories to display yet.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right Column: Chart + Transactions Feed -->
+    <section class="dashboard-main">
+
+      <!-- Plotly Analytics Chart Card -->
+      <div class="card card-plotly">
+        <div class="plotly-card-header">
+          <div class="plotly-title-wrap">
+            <svg class="analytics-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" x2="18" y1="20" y2="10"/>
+              <line x1="12" x2="12" y1="20" y2="4"/>
+              <line x1="6" x2="6" y1="20" y2="14"/>
+            </svg>
+            <div>
+              <h2 class="section-title">Expense Analytics</h2>
+              <span class="plotly-sub" id="plotlySubtext">Visualizing your cash flow and habits</span>
+            </div>
+          </div>
+          <div class="plotly-controls" id="plotlyControls">
+            <button id="btnChartCashFlow" class="btn-chart-tab active" data-chart="cashflow">Cash Flow</button>
+            <button id="btnChartCategories" class="btn-chart-tab" data-chart="categories">By Category</button>
+            <button id="btnChartTrend" class="btn-chart-tab" data-chart="trend">Daily Trend</button>
+          </div>
+        </div>
+        
+        <div id="plotlyChart" class="plotly-chart-div"></div>
+        
+        <div id="plotlyNoData" class="plotly-no-data">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 3v18h18"/>
+            <path d="m19 9-5 5-4-4-3 3"/>
+          </svg>
+          <p>Add transactions to view interactive analytics.</p>
+        </div>
+      </div>
+
+      <div class="card card-feed">
+        <div class="feed-header">
+          <h2 class="section-title">Recent Transactions</h2>
+
+          <div class="feed-controls">
+            <!-- Search Bar -->
+            <div class="search-wrapper">
+              <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.3-4.3" />
+              </svg>
+              <input type="text" id="txSearch" placeholder="Search note...">
+            </div>
+
+            <!-- Filter Type -->
+            <select id="txFilterType" class="select-filter" title="Filter by transaction type">
+              <option value="all">All Types</option>
+              <option value="income">Income</option>
+              <option value="expense">Expense</option>
+            </select>
+
+            <!-- Filter Date Range -->
+            <select id="txFilterDate" class="select-filter" title="Filter by date range">
+              <option value="all">All Time</option>
+              <option value="today">Today</option>
+              <option value="week">This Week</option>
+              <option value="month">This Month</option>
+              <option value="year">This Year</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Transactions Container -->
+        <div class="transactions-list-wrapper">
+          <div id="transactionsList" class="transactions-list">
+            <!-- Loaded dynamically -->
+            <div class="empty-state">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <path d="M14 2v6h6" />
+                <path d="M16 13H8" />
+                <path d="M16 17H8" />
+                <path d="M10 9H8" />
+              </svg>
+              <p>No transactions recorded yet.</p>
+              <span>Click Add Income or Add Expense to start tracking!</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+
+
+  <!-- Transaction Modal (Add/Edit) -->
+  <div class="modal-overlay" id="txModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modalTitle">Add Transaction</h3>
+        <button id="btnModalClose" class="modal-close-btn" aria-label="Close modal">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 6 6 18" />
+            <path d="m6 6 12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <form id="txForm" class="modal-form">
+        <!-- Edit Target ID (hidden) -->
+        <input type="hidden" id="txId">
+
+        <!-- Type Selector -->
+        <div class="form-group">
+          <label>Type <span class="required">*</span></label>
+          <div class="type-segmented-control">
+            <input type="radio" id="typeIncome" name="txType" value="income" checked>
+            <label for="typeIncome" class="segmented-option option-income">Income</label>
+
+            <input type="radio" id="typeExpense" name="txType" value="expense">
+            <label for="typeExpense" class="segmented-option option-expense">Expense</label>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <!-- Amount -->
+          <div class="form-group flex-1">
+            <label for="txAmount">Amount (₹) <span class="required">*</span></label>
+            <input type="number" id="txAmount" min="0.01" step="0.01" required placeholder="0.00">
+          </div>
+
+          <!-- Date -->
+          <div class="form-group flex-1">
+            <label for="txDate">Date <span class="required">*</span></label>
+            <input type="date" id="txDate" required>
+          </div>
+        </div>
+
+        <!-- Category -->
+        <div class="form-group">
+          <label for="txCategory">Category <span class="required">*</span></label>
+          <select id="txCategory" required>
+            <option value="" disabled selected>Select category</option>
+            <option value="Salary">Salary</option>
+            <option value="Investment">Investment</option>
+            <option value="Food">Food & Dining</option>
+            <option value="Transport">Transport & Auto</option>
+            <option value="Utilities">Utilities & Bills</option>
+            <option value="Entertainment">Entertainment & Leisure</option>
+            <option value="Shopping">Shopping</option>
+            <option value="Housing">Housing & Rent</option>
+            <option value="Other">Other / Misc</option>
+          </select>
+        </div>
+
+        <!-- Notes -->
+        <div class="form-group">
+          <label for="txNotes">Optional Note</label>
+          <textarea id="txNotes" rows="2" placeholder="e.g., Grocery shopping, monthly bonus..."></textarea>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" id="btnSubmitTx" class="btn btn-primary">Save Transaction</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Custom Confirmation Dialog Modal Overlay -->
+  <div class="modal-overlay" id="confirmModal">
+    <div class="modal-card confirm-card">
+      <div class="confirm-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" x2="12" y1="8" y2="12" />
+          <line x1="12" x2="12" y1="16" y2="16" />
+        </svg>
+      </div>
+      <h3 id="confirmTitle">Confirm Action</h3>
+      <p id="confirmMessage">Are you sure you want to proceed?</p>
+      <div class="confirm-actions">
+        <button id="btnConfirmCancel" class="btn-secondary">Cancel</button>
+        <button id="btnConfirmProceed" class="btn btn-expense">Proceed</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notifications Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Main JavaScript Logic -->
+  <script src="app.js"></script>
+</body>
+
+</html>
